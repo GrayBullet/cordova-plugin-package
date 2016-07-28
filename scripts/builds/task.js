@@ -7,8 +7,8 @@ var Browser = require('./browser');
 var Unsupport = require('./unsupport');
 
 var Task = function (platform, options) {
-  this.platform = platform;
-  this.options = {
+  this._platform = platform;
+  this._options = {
     build: options.build,
     cordovaRoot: options.cordovaRoot,
     platform: platform,
@@ -20,28 +20,37 @@ var Task = function (platform, options) {
 
 Task.prototype.invoke = function () {
   var that = this;
+  var options = this._options;
 
   return Promise.resolve()
-    .then(function () { return util.rmForceRecursive(that.options.platformDist); })
-    .then(function () { return util.mkdirp(that.options.platformDist); })
-    .then(function () { return that.getPlatformTask().invoke(); });
+    .then(function () {
+      return util.rmForceRecursive(options.platformDist);
+    })
+    .then(function () {
+      return util.mkdirp(options.platformDist);
+    })
+    .then(function () {
+      return that.getPlatformTask().invoke();
+    });
 };
 
 Task.prototype.getPlatformTask = function () {
+  var options = this._options;
+
   var dist = new DistManager({
-    src: this.options.platformRoot,
-    dist: this.options.platformDist
+    src: options.platformRoot,
+    dist: options.platformDist
   });
 
-  switch(this.platform) {
-  case 'android':
-    return new Android(dist, this.options);
+  switch (this._platform) {
+    case 'android':
+      return new Android(dist, options);
 
-  case 'browser':
-    return new Browser(dist, this.options);
+    case 'browser':
+      return new Browser(dist, options);
 
-  default:
-    return new Unsupport(dist, this.options);
+    default:
+      return new Unsupport(dist, options);
   }
 };
 

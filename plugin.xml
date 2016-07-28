@@ -7,4 +7,6 @@
     <name>Package</name>
     <description>Cordova Package Plugin</description>
     <license>MIT</license>
+
+    <hook type="after_build" src="scripts/copy-dist.js" />
 </plugin>

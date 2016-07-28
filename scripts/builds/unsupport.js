@@ -1,9 +1,9 @@
 var Unsupport = function (options) {
-  this.options = options;
+  this._options = options;
 };
 
 Unsupport.prototype.invoke = function () {
-  console.log('Unsupport platform `' + this.options.platform + '`');
+  console.log('Unsupport platform `' + this._options.platform + '`');
 };
 
 module.exports = Unsupport;

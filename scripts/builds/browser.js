@@ -1,5 +1,5 @@
 var Browser = function (dist, options) {
-  this.options = options;
+  this._options = options;
 
   this.dist = dist.chSrc('build');
 };

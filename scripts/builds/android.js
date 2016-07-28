@@ -1,7 +1,7 @@
 var path = require('path');
 
 var Android = function (dist, options) {
-  this.options = options;
+  this._options = options;
 
   this.dist = dist.chSrc(path.join('build', 'outputs', 'apk'));
 };
@@ -10,12 +10,14 @@ Android.prototype.invoke = function () {
   var that = this;
 
   return this.dist
-    .files(function (file) { return that.isApk(file); })
+    .files(function (file) {
+      return that.isApk(file);
+    })
     .copy();
 };
 
 Android.prototype.isApk = function (file) {
-  var build = this.options.build;
+  var build = this._options.build;
 
   if (build === 'debug') {
     return file.match(/.*-debug.*\.apk/);

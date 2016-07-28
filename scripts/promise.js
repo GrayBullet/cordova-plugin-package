@@ -1,5 +1,5 @@
 /** @namespace Promise.then */
 /** @namespace Promise.all */
 
-//noinspection JSUnresolvedVariable
+// noinspection JSUnresolvedVariable
 module.exports = Promise;

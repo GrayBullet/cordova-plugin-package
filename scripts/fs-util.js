@@ -4,7 +4,7 @@ var execFile = require('child_process').execFile;
 var Promise = require('./promise');
 
 var fsUtil = {
-  execFile: function(file, args, options) {
+  execFile: function (file, args, options) {
     return new Promise(function (resolve, reject) {
       execFile(file, args, options, function (error) {
         if (error) {
@@ -25,13 +25,17 @@ var fsUtil = {
     var that = this;
 
     var enumerateFiles;
-    if (typeof(filesOrFilter) === 'function') {
+    if (typeof filesOrFilter === 'function') {
       enumerateFiles = function () {
         return that.readdir(srcDir)
-          .then(function (files) { return files.filter(filesOrFilter); });
+          .then(function (files) {
+            return files.filter(filesOrFilter);
+          });
       };
-    } else{
-      enumerateFiles = function () { return Promise.resolve(filesOrFilter); };
+    } else {
+      enumerateFiles = function () {
+        return Promise.resolve(filesOrFilter);
+      };
     }
 
     return enumerateFiles()
