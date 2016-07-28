@@ -1,8 +1,7 @@
-'use strict';
-
 var fs = require('fs');
 var path = require('path');
 var execFile = require('child_process').execFile;
+var Promise = require('./promise');
 
 var fsUtil = {
   execFile: function(file, args, options) {
@@ -60,7 +59,7 @@ var fsUtil = {
       });
     });
   },
-  rmForceRecursive(dir) {
+  rmForceRecursive: function (dir) {
     return this.execFile('rm', ['-rf', dir]);
   }
 };

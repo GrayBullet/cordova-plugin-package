@@ -15,24 +15,6 @@ function loadConfig(dir) {
   }
 }
 
-function loadConfigRecusrive(dir) {
-  var temp = dir;
-
-  while (true) {
-    var nodeModules = path.join(temp, 'node_modules');
-    if (exists(nodeModules)) {
-      return temp;
-    }
-
-    var parent = path.dirname(temp);
-    if (parent === temp) {
-      return dir;
-    }
-
-    temp = parent;
-  }
-}
-
 function exists(dir) {
   try {
     return fs.statSync(dir).isDirectory();

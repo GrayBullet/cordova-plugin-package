@@ -1,5 +1,7 @@
-'use strict';
+/** @namespace context.opts */
+/** @namespace context.opts.cordova */
 
+var Promise = require('./promise');
 var Task = require('./builds/task');
 var config = require('./config');
 
@@ -20,4 +22,4 @@ module.exports = function (context) {
     .map(function (task) { return task.invoke(); });
 
   return Promise.all(tasks);
-}
+};

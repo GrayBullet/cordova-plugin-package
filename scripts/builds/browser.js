@@ -1,8 +1,3 @@
-'use strict';
-
-var path = require('path');
-var util = require('../fs-util');
-
 var Browser = function (dist, options) {
   this.options = options;
 

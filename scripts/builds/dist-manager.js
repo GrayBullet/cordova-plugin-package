@@ -2,6 +2,7 @@
 
 var path = require('path');
 var util = require('../fs-util');
+var Promise = require('../promise');
 
 var DistManager = function (options) {
   this.options = options;

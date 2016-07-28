@@ -1,4 +1,5 @@
 var path = require('path');
+var Promise = require('../promise');
 var util = require('../fs-util');
 var DistManager = require('./dist-manager');
 var Android = require('./android');
@@ -21,9 +22,9 @@ Task.prototype.invoke = function () {
   var that = this;
 
   return Promise.resolve()
-    .then(() => util.rmForceRecursive(that.options.platformDist))
-    .then(() => util.mkdirp(that.options.platformDist))
-    .then(() => that.getPlatformTask().invoke());
+    .then(function () { return util.rmForceRecursive(that.options.platformDist); })
+    .then(function () { return util.mkdirp(that.options.platformDist); })
+    .then(function () { return that.getPlatformTask().invoke(); });
 };
 
 Task.prototype.getPlatformTask = function () {
