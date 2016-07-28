@@ -13,6 +13,13 @@
   "scripts": {
     "lint": "eslint .eslintrc.js 'scripts/**/*.js'"
   },
+  "files": [
+    "README.md",
+    "LICENSE",
+    "package.json",
+    "plugin.xml",
+    "scripts"
+  ],
   "devDependencies": {
     "eslint": "^3.1.1",
     "eslint-config-google": "^0.6.0",
