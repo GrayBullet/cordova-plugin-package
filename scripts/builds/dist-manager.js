@@ -1,62 +1,28 @@
-'use strict';
-
 var path = require('path');
-var util = require('../fs-util');
 var Promise = require('../promise');
+var Source = require('./source');
 
 var DistManager = function (options) {
   this._options = options;
 };
 
-DistManager.prototype.chSrc = function (src) {
-  this._options.src = path.join(this._options.src, src);
-  return this;
-};
-
-DistManager.prototype.files = function (filesOrFilter) {
+DistManager.prototype.srcFiles = function (src, filesOrFilter) {
   var options = this._options;
 
-  if (typeof filesOrFilter === 'function') {
-    options.enumerator = function () {
-      return util.readdir(options.src)
-        .then(function (files) {
-          return files.filter(filesOrFilter);
-        });
-    };
-  } else {
-    options.enumerator = function () {
-      return Promise.resolve(filesOrFilter);
-    };
-  }
+  var sources = options.sources = options.sources || [];
+  sources.push(new Source(path.join(options.src, src), filesOrFilter));
 
   return this;
 };
 
 DistManager.prototype.copy = function () {
-  var that = this;
-
-  return this._options.enumerator()
-    .then(function (files) {
-      return that.copyFiles(files);
-    });
-};
-
-DistManager.prototype.copyFiles = function (files) {
-  var that = this;
-
-  var copies = files.map(function (file) {
-    return that.copyFile(file);
-  });
-  return Promise.all(copies);
-};
-
-DistManager.prototype.copyFile = function (file) {
   var options = this._options;
 
-  return util.copyFile(file, options.src, options.dist)
-    .then(function (destFile) {
-      console.log('Copy to ' + destFile);
-    });
+  var copies = options.sources.map(function (source) {
+    return source.copy(options.dist);
+  });
+
+  return Promise.all(copies);
 };
 
 module.exports = DistManager;

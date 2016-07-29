@@ -88,9 +88,9 @@ var fsUtil = {
         return destFile;
       });
   },
-  readdir: function (dir, options) {
+  readdir: function (dir) {
     return new Promise(function (resolve, reject) {
-      fs.readdir(dir, options, function (error, files) {
+      fs.readdir(dir, function (error, files) {
         if (error) {
           reject(error);
         } else {

@@ -1,31 +1,32 @@
 var path = require('path');
 
-var Android = function (dist, options) {
-  this._options = options;
+/**
+ * Make validate filename is apk function.
+ * @param {String} build Buld type.
+ * @return {Function} validator function.
+ */
+function makeIsApk(build) {
+  return function (file) {
+    if (build === 'debug') {
+      return file.match(/.*-debug.*\.apk$/);
+    } else if (build === 'release') {
+      return file.match(/.*-release.*\.apk$/);
+    }
 
-  this.dist = dist.chSrc(path.join('build', 'outputs', 'apk'));
+    throw new Error('Invalid operation build type `' + build + '`');
+  };
+}
+
+var Android = function (dist, options) {
+  var isApk = makeIsApk(options.build);
+
+  this.dist = dist
+    .srcFiles('ant-build', isApk)
+    .srcFiles(path.join('build', 'outputs', 'apk'), isApk);
 };
 
 Android.prototype.invoke = function () {
-  var that = this;
-
-  return this.dist
-    .files(function (file) {
-      return that.isApk(file);
-    })
-    .copy();
-};
-
-Android.prototype.isApk = function (file) {
-  var build = this._options.build;
-
-  if (build === 'debug') {
-    return file.match(/.*-debug.*\.apk/);
-  } else if (build === 'release') {
-    return file.match(/.*-release.*\.apk/);
-  }
-
-  throw new Error('Invalid operation build type `' + build + '`');
+  return this.dist.copy();
 };
 
 module.exports = Android;
