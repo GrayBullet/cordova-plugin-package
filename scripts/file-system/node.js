@@ -21,11 +21,22 @@ function stat(pathname) {
 }
 
 /**
+ * Null object node.
+ * @constructor
+ */
+function NullNode() {
+}
+
+NullNode.prototype.remove = function () {
+};
+
+/**
  * Create node.
  * @param {String} pathname Node path.
  * @return {File|Directory} Fire or directory.
  */
 function create(pathname) {
+  // noinspection JSUnresolvedFunction
   return stat(pathname)
     .then(function (stats) {
       if (stats.isDirectory()) {
@@ -37,6 +48,14 @@ function create(pathname) {
 
       // noinspection JSUnresolvedFunction
       return Promise.reject(new Error('Unspported node type.'));
+    })
+    .catch(function (error) {
+      if (error.code === 'ENOENT') {
+        return new NullNode(pathname);
+      }
+
+      // noinspection JSUnresolvedFunction
+      return Promise.reject(error);
     });
 }
 

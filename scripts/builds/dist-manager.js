@@ -52,13 +52,8 @@ DistManager.prototype.copyFiles = function (files) {
 
 DistManager.prototype.copyFile = function (file) {
   var options = this._options;
-  var src = path.join(options.src, file);
-  var dest = path.join(options.dist, file);
 
-  return util.copy(src, dest)
-    .then(function () {
-      console.log('Copy to ' + dest);
-    });
+  return util.copyFile(file, options.src, options.dist);
 };
 
 module.exports = DistManager;
