@@ -83,6 +83,9 @@ var fsUtil = {
       })
       .then(function () {
         return copy(srcFile, destFile);
+      })
+      .then(function () {
+        return destFile;
       });
   },
   readdir: function (dir, options) {
