@@ -1,7 +1,8 @@
 module.exports = {
   extends: 'google',
   env: {
-    node: true
+    node: true,
+    jasmine: true
   },
   rules: {
     'max-len': [2, 120],

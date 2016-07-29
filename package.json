@@ -11,7 +11,8 @@
     ]
   },
   "scripts": {
-    "lint": "eslint .eslintrc.js 'scripts/**/*.js'"
+    "lint": "eslint .eslintrc.js 'scripts/**/*.js'",
+    "test": "jasmine"
   },
   "files": [
     "README.md",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "eslint": "^3.1.1",
     "eslint-config-google": "^0.6.0",
-    "jasmine": "^2.4.1"
+    "jasmine": "^2.4.1",
+    "underscore": "^1.8.3"
   }
 }
