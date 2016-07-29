@@ -1,12 +1,11 @@
 {
   "name": "cordova-plugin-package",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Cordova Package Plugin",
   "cordova": {
     "id": "cordova-plugin-package",
     "platforms": [
       "android",
-      "ios",
       "browser"
     ]
   },
