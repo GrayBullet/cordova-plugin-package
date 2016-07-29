@@ -1,4 +1,4 @@
-var Unsupport = function (options) {
+var Unsupport = function (dist, options) {
   this._options = options;
 };
 
