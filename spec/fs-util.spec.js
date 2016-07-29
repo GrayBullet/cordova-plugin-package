@@ -10,7 +10,6 @@ describe('fsUtil', function () {
 
       // noinspection JSUnresolvedFunction
       expect(result).toEqual([
-        '/',
         '/a',
         '/a/b',
         '/a/b/cde',

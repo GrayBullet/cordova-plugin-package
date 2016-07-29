@@ -43,13 +43,13 @@ var fsUtil = {
     temp = path.dirname(temp);
 
     while (true) { // eslint-disable-line no-constant-condition
-      list.unshift(temp);
-
       var prev = temp;
       temp = path.dirname(temp);
       if (prev === temp) {
         return list;
       }
+
+      list.unshift(prev);
     }
   },
   execFile: function (file, args, options) {
