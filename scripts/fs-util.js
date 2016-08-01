@@ -101,7 +101,7 @@ var fsUtil = {
   },
   rmForceRecursive: function (dir) {
     return Node
-      .get(dir)
+      .create(dir)
       .then(function (node) {
         return node.remove();
       });

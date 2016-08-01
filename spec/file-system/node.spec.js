@@ -10,7 +10,7 @@ var Node = require('../../scripts/file-system/node');
 function convert(children) {
   return _.chain(children)
     .map(function (child) {
-      return {path: child.path, type: child.type};
+      return {path: child.path.full, type: child.type};
     })
     .sortBy(function (child) {
       return child.path;
@@ -24,7 +24,7 @@ describe('Node', function () {
   describe('getChildren', function () {
     // noinspection JSUnresolvedFunction
     it('Enumrate children', function (done) {
-      Node.get(path.join(__dirname, 'test1'))
+      Node.create(path.join(__dirname, 'test1'))
         .then(function (target) {
           return target.getChildren();
         })
@@ -39,7 +39,7 @@ describe('Node', function () {
             {path: path.join(__dirname, 'test1', 'file12'), type: 'file'}
           ]);
         })
-        .then(done);
+        .then(done, console.log);
     });
   });
 });

@@ -1,15 +1,14 @@
 var fs = require('fs');
-var path = require('path');
 var Promise = require('../promise');
 
 /**
  * fs.readdir with Promise.
- * @param {String} pathname pathname.
- * @return {Promise.<Array>} files.
+ * @param {String} dir Directory.
+ * @return {Promise.<Array>} Files.
  */
-function readdir(pathname) {
+function readdir(dir) {
   return new Promise(function (resolve, reject) {
-    fs.readdir(pathname, function (error, files) {
+    fs.readdir(dir, function (error, files) {
       if (error) {
         reject(error);
       } else {
@@ -17,19 +16,6 @@ function readdir(pathname) {
       }
     });
   });
-}
-
-/**
- * Path join base directory.
- * @param {String} basedir Base directory.
- * @return {Function} Join base directory function.
- */
-function pathJoin(basedir) {
-  return function (files) {
-    return files.map(function (file) {
-      return path.join(basedir, file);
-    });
-  };
 }
 
 /**
@@ -69,40 +55,44 @@ function removeAll(items) {
 
 /**
  * Get node object.
- * @param {String} pathname Node path.
+ * @param {PathInfo} pathInfo Node path.
  * @return {Promise.<File|Directory>} File or Directory object.
  */
-function get(pathname) {
-  return require('./node').get(pathname);
+function get(pathInfo) {
+  return require('./node').get(pathInfo);
 }
 
 /**
  * Get all node objects.
- * @param {Array.<String>} pathnames Node paths.
+ * @param {Array.<PathInfo>} pathInfos Node paths.
  * @return {Promise.<Array.<File|Directory>>} File or Directory objects.
  */
-function getAll(pathnames) {
-  return Promise.all(pathnames.map(get));
+function getAll(pathInfos) {
+  return Promise.all(pathInfos.map(get));
 }
 
 /**
  * Directory node object.
- * @param {String} pathname File path.
+ * @param {PathInfo} pathInfo File path.
  * @constructor
  */
-function Directory(pathname) {
-  this.path = pathname;
+function Directory(pathInfo) {
+  this.path = pathInfo;
   this.type = 'directory';
 }
 
 Directory.prototype.getChildren = function () {
-  return readdir(this.path)
-    .then(pathJoin(this.path))
+  var pathInfo = this.path;
+
+  return readdir(pathInfo.full)
+    .then(function (relatives) {
+      return relatives.map(pathInfo.newPath.bind(pathInfo));
+    })
     .then(getAll);
 };
 
 Directory.prototype.rmdir = function () {
-  return rmdir(this.path);
+  return rmdir(this.path.full);
 };
 
 Directory.prototype.removeChildren = function () {
