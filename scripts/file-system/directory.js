@@ -1,71 +1,5 @@
-var fs = require('fs');
+var util = require('./util');
 var Promise = require('../promise');
-
-/**
- * fs.readdir with Promise.
- * @param {String} dir Directory.
- * @return {Promise.<Array>} Files.
- */
-function readdir(dir) {
-  return new Promise(function (resolve, reject) {
-    fs.readdir(dir, function (error, files) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(files);
-      }
-    });
-  });
-}
-
-/**
- * Remove directory.
- * @param {String} dir Directory name.
- * @return {Promise} Promise object.
- */
-function rmdir(dir) {
-  return new Promise(function (resolve, reject) {
-    fs.rmdir(dir, function (error) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-/**
- * Make directory.
- * @param {string} dir Directory name.
- * @return {Promise} Promise object.
- */
-function mkdir(dir) {
-  return new Promise(function (resolve, reject) {
-    fs.mkdir(dir, function (error) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
-}
-
-/**
- * Copy directory.
- * @param {String} dir Directory.
- * @return {Promise} Promise object.
- */
-function cpdir(dir) {
-  return mkdir(dir)
-    .catch(function (error) {
-      if (error.code === 'EEXIST') {
-        return;
-      }
-      return Promise.reject(error);
-    });
-}
 
 /**
  * Invoke children.
@@ -121,7 +55,7 @@ function Directory(pathInfo) {
 Directory.prototype.getChildren = function () {
   var pathInfo = this.path;
 
-  return readdir(pathInfo.full)
+  return util.dir.readdir(pathInfo.full)
     .then(function (relatives) {
       return relatives.map(pathInfo.newPath.bind(pathInfo));
     })
@@ -131,11 +65,11 @@ Directory.prototype.getChildren = function () {
 Directory.prototype.remove = function () {
   return Promise.resolve()
     .then(invokeChildren.bind(this, remove))
-    .then(rmdir.bind(this, this.path.full));
+    .then(util.dir.rmdir.bind(null, this.path.full));
 };
 
 Directory.prototype.copy = function (dest) {
-  return cpdir(this.path.dest(dest));
+  return util.dir.cpdir(this.path.dest(dest));
 };
 
 module.exports = Directory;

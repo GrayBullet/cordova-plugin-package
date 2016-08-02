@@ -1,20 +1,5 @@
-var fs = require('fs');
 var Promise = require('../promise');
-
-/**
- * Copy file.
- * @param {String} src Source path.
- * @param {String} dest Destination path.
- * @return {Promise} Promise object.
- */
-function cp(src, dest) {
-  return new Promise(function (resolve, reject) {
-    fs.createReadStream(src)
-      .pipe(fs.createWriteStream(dest))
-      .on('close', resolve)
-      .on('error', reject);
-  });
-}
+var util = require('./util');
 
 /**
  * File node object.
@@ -29,15 +14,7 @@ function File(pathInfo) {
 File.prototype.remove = function () {
   var pathInfo = this.path;
 
-  return new Promise(function (resolve, reject) {
-    return fs.unlink(pathInfo.full, function (error) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve();
-      }
-    });
-  });
+  return util.file.remove(pathInfo.full);
 };
 
 File.prototype.getChildren = function () {
@@ -48,7 +25,7 @@ File.prototype.copy = function (dest, callback) {
   var that = this;
   var destPath = this.path.dest(dest);
 
-  return cp(this.path.full, this.path.dest(dest))
+  return util.file.copy(this.path.full, destPath)
     .then(function () {
       if (callback) {
         callback(destPath, that);

@@ -1,6 +1,7 @@
 var path = require('path');
 var Promise = require('../promise');
-var util = require('../fs-util');
+var util = require('../file-system/util');
+var Node = require('../file-system/node');
 var DistManager = require('./dist-manager');
 var Android = require('./android');
 var Browser = require('./browser');
@@ -24,10 +25,13 @@ Task.prototype.invoke = function () {
 
   return Promise.resolve()
     .then(function () {
-      return util.rmForceRecursive(options.platformDist);
+      return Node.create(options.platformDist)
+        .then(function (node) {
+          return node.remove();
+        });
     })
     .then(function () {
-      return util.mkdirp(options.platformDist);
+      return util.dir.mkdirp(options.platformDist);
     })
     .then(function () {
       return that.getPlatformTask().invoke();

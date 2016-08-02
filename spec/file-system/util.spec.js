@@ -1,7 +1,7 @@
-var util = require('../scripts/fs-util');
+var util = require('../../scripts/file-system/util');
 
 // noinspection JSUnresolvedFunction
-describe('fsUtil', function () {
+describe('util', function () {
   // noinspection JSUnresolvedFunction
   describe('followPath', function () {
     // noinspection JSUnresolvedFunction
