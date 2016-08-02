@@ -36,21 +36,58 @@ function rmdir(dir) {
 }
 
 /**
+ * Make directory.
+ * @param {string} dir Directory name.
+ * @return {Promise} Promise object.
+ */
+function mkdir(dir) {
+  return new Promise(function (resolve, reject) {
+    fs.mkdir(dir, function (error) {
+      if (error) {
+        reject(error);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+/**
+ * Copy directory.
+ * @param {String} dir Directory.
+ * @return {Promise} Promise object.
+ */
+function cpdir(dir) {
+  return mkdir(dir)
+    .catch(function (error) {
+      if (error.code === 'EEXIST') {
+        return;
+      }
+      return Promise.reject(error);
+    });
+}
+
+/**
+ * Invoke children.
+ * @param {Function} func Invoke function.
+ * @return {Promise} Promise object.
+ */
+function invokeChildren(func) {
+  return this.getChildren()
+    .then(function (children) {
+      return children.reduce(function (prev, current) {
+        return func(current);
+      }, Promise.resolve());
+    });
+}
+
+/**
  * Remove item.
  * @param {Object} item Item.
  * @return {Promise} Promise object.
  */
 function remove(item) {
   return item.remove();
-}
-
-/**
- * Remove all items.
- * @param {Array} items Items.
- * @return {Promise} Promise object.
- */
-function removeAll(items) {
-  return Promise.all(items.map(remove));
 }
 
 /**
@@ -91,18 +128,14 @@ Directory.prototype.getChildren = function () {
     .then(getAll);
 };
 
-Directory.prototype.rmdir = function () {
-  return rmdir(this.path.full);
-};
-
-Directory.prototype.removeChildren = function () {
-  return this.getChildren().then(removeAll);
-};
-
 Directory.prototype.remove = function () {
   return Promise.resolve()
-    .then(this.removeChildren.bind(this))
-    .then(this.rmdir.bind(this));
+    .then(invokeChildren.bind(this, remove))
+    .then(rmdir.bind(this, this.path.full));
+};
+
+Directory.prototype.copy = function (dest) {
+  return cpdir(this.path.dest(dest));
 };
 
 module.exports = Directory;

@@ -31,6 +31,10 @@ function NullNode() {
 NullNode.prototype.remove = function () {
 };
 
+NullNode.prototype.getChildren = function () {
+  return Promise.resolve([]);
+};
+
 /**
  * Path information.
  * @constructor
@@ -38,11 +42,15 @@ NullNode.prototype.remove = function () {
 function PathInfo() {
 }
 
+PathInfo.prototype.dest = function (dest) {
+  return path.join(dest, this.relative);
+};
+
 PathInfo.prototype.newPath = function (relative) {
   var info = new PathInfo();
   info.basedir = this.basedir;
-  info.relative = relative;
-  info.full = path.join(info.basedir, relative);
+  info.relative = path.join(this.relative, relative);
+  info.full = path.join(info.basedir, info.relative);
 
   return info;
 };
@@ -89,8 +97,15 @@ function create(pathInfo) {
  * @constructor
  */
 function Node() {
+  this.relative = '';
+  this.path = {};
+
   throw new Error('Do not create node instance.');
 }
+
+Node.prototype.getChildren = function () {
+  throw new Error('Require implement');
+};
 
 Node.get = function (pathInfo) {
   return create(pathInfo);
@@ -98,6 +113,34 @@ Node.get = function (pathInfo) {
 
 Node.create = function (pathname) {
   return Node.get(PathInfo.create(pathname));
+};
+
+Node.filesSet = function (pathname, optFilter) {
+  if (typeof optFilter !== 'function') {
+    return;
+  }
+
+  var filter = optFilter || function () {
+    return true;
+  };
+
+  return {
+    copy: function (dest) {
+      return Node.create(pathname)
+        .then(function (root) {
+          return root.filter(filter);
+        })
+        .then(function (nodes) {
+          if (nodes.length <= 0) {
+            return [];
+          }
+
+          return nodes.reduce(function (prev, current) {
+            return prev.then(current.copy.bind(current, dest));
+          }, Promise.resolve());
+        });
+    }
+  };
 };
 
 module.exports = Node;

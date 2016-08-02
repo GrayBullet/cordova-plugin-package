@@ -8,9 +8,9 @@ var path = require('path');
 function makeIsApk(build) {
   return function (file) {
     if (build === 'debug') {
-      return file.match(/.*-debug.*\.apk$/);
+      return /.*-debug.*\.apk$/.test(file);
     } else if (build === 'release') {
-      return file.match(/.*-release.*\.apk$/);
+      return /.*-release.*\.apk$/.test(file);
     }
 
     throw new Error('Invalid operation build type `' + build + '`');

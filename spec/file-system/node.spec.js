@@ -21,7 +21,7 @@ function convert(children) {
 // noinspection JSUnresolvedFunction
 describe('Node', function () {
   // noinspection JSUnresolvedFunction
-  describe('getChildren', function () {
+  describe('getNodes', function () {
     // noinspection JSUnresolvedFunction
     it('Enumrate children', function (done) {
       Node.create(path.join(__dirname, 'test1'))
@@ -39,7 +39,7 @@ describe('Node', function () {
             {path: path.join(__dirname, 'test1', 'file12'), type: 'file'}
           ]);
         })
-        .then(done, console.log);
+        .then(done);
     });
   });
 });
