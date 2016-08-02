@@ -142,7 +142,7 @@ function rmdir(dir) {
  */
 function cpdir(dir) {
   // noinspection JSUnresolvedFunction
-  return mkdir(dir)
+  return mkdirp(dir)
     .catch(function (error) {
       if (error.code === 'EEXIST') {
         return;

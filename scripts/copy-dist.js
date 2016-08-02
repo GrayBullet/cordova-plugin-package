@@ -14,7 +14,8 @@ module.exports = function (context) {
     platforms: context.opts.cordova.platforms,
     cmdLine: context.cmdLine,
     options: context.opts.options,
-    build: context.opts.options.release ? 'release' : 'debug'
+    build: context.opts.options.release ? 'release' : 'debug',
+    device: context.opts.options.device ? 'device' : 'emulator'
   };
 
   var tasks = options.platforms

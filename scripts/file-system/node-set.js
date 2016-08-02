@@ -91,7 +91,12 @@ NodeSet.prototype.copy = function (dest, callback) {
 
       return nodes.reduce(function (prev, current) {
         return prev.then(function () {
-          return current.copy(dest, callback);
+          return current.copy(dest)
+            .then(function (destPath) {
+              if (callback) {
+                callback(destPath, current);
+              }
+            });
         });
       }, Promise.resolve());
     }).catch(console.log);

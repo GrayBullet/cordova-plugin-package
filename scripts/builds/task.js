@@ -5,12 +5,14 @@ var Node = require('../file-system/node');
 var DistManager = require('./dist-manager');
 var Android = require('./android');
 var Browser = require('./browser');
+var IOs = require('./ios');
 var Unsupport = require('./unsupport');
 
 var Task = function (platform, options) {
   this._platform = platform;
   this._options = {
     build: options.build,
+    device: options.device,
     cordovaRoot: options.cordovaRoot,
     platform: platform,
     platformRoot: path.join(options.cordovaRoot, 'platforms', platform),
@@ -52,6 +54,9 @@ Task.prototype.getPlatformTask = function () {
 
     case 'browser':
       return new Browser(dist, options);
+
+    case 'ios':
+      return new IOs(dist, options);
 
     default:
       return new Unsupport(dist, options);

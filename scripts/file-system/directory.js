@@ -2,26 +2,72 @@ var util = require('./util');
 var Promise = require('../promise');
 
 /**
- * Invoke children.
- * @param {Function} func Invoke function.
- * @return {Promise} Promise object.
+ * Get children enumrator function.
+ * @param {Node} node Node.
+ * @returns {Function} Children enumerator function.
  */
-function invokeChildren(func) {
-  return this.getChildren()
-    .then(function (children) {
-      return children.reduce(function (prev, current) {
-        return func(current);
-      }, Promise.resolve());
-    });
+function getChildren(node) {
+  return function () {
+    return node.getChildren();
+  }
 }
 
 /**
- * Remove item.
- * @param {Object} item Item.
- * @return {Promise} Promise object.
+ * Get invoker function by element.
+ * @param {Function} func Invoke function.
+ * @returns {Function} Invoker function.
  */
-function remove(item) {
-  return item.remove();
+function forEach(func) {
+  return function (children) {
+    return children.reduce(function (prev, current) {
+      return prev.then(function () {
+        return func(current);
+      });
+    }, Promise.resolve());
+  };
+}
+
+/**
+ * Get remove node function.
+ * @returns {Function} Remove node function.
+ */
+function remove() {
+  return function (item) {
+    return item.remove();
+  }
+}
+
+/**
+ * Get copy node function.
+ * @param {String} dest Destination path.
+ * @returns {Function} Copy node function.
+ */
+function copy(dest) {
+  return function (item) {
+    return item.copy(dest);
+  }
+}
+
+/**
+ * Get remove directory function.
+ * @param {String} dir Remove directory.
+ * @returns {Function} Remove directory function.
+ */
+function rmdir(dir) {
+  return function () {
+    return util.dir.rmdir(dir);
+  }
+}
+
+/**
+ * Get copy directory function.
+ * @param {String} dir Destination directory.
+ * @returns {Function} Copy directory function.
+ */
+function cpdir(dir) {
+  return function () {
+    return util.dir.cpdir(dir);
+  }
 }
 
 /**
@@ -61,15 +107,25 @@ Directory.prototype.getChildren = function () {
     })
     .then(getAll);
 };
-
 Directory.prototype.remove = function () {
+  var that = this;
+
   return Promise.resolve()
-    .then(invokeChildren.bind(this, remove))
-    .then(util.dir.rmdir.bind(null, this.path.full));
+    .then(getChildren(this))
+    .then(forEach(remove()))
+    .then(rmdir(this.path.full));
 };
 
 Directory.prototype.copy = function (dest) {
-  return util.dir.cpdir(this.path.dest(dest));
+  var destPath = this.path.dest(dest);
+
+  return Promise.resolve()
+    .then(cpdir(destPath))
+    .then(getChildren(this))
+    .then(forEach(copy(dest)))
+    .then(function () {
+      return destPath;
+    });
 };
 
 module.exports = Directory;
