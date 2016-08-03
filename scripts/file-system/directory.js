@@ -3,19 +3,19 @@ var Promise = require('../promise');
 
 /**
  * Get children enumrator function.
- * @param {Node} node Node.
- * @returns {Function} Children enumerator function.
+ * @param {Object} node Node.
+ * @return {Function} Children enumerator function.
  */
 function getChildren(node) {
   return function () {
     return node.getChildren();
-  }
+  };
 }
 
 /**
  * Get invoker function by element.
  * @param {Function} func Invoke function.
- * @returns {Function} Invoker function.
+ * @return {Function} Invoker function.
  */
 function forEach(func) {
   return function (children) {
@@ -29,46 +29,46 @@ function forEach(func) {
 
 /**
  * Get remove node function.
- * @returns {Function} Remove node function.
+ * @return {Function} Remove node function.
  */
 function remove() {
   return function (item) {
     return item.remove();
-  }
+  };
 }
 
 /**
  * Get copy node function.
  * @param {String} dest Destination path.
- * @returns {Function} Copy node function.
+ * @return {Function} Copy node function.
  */
 function copy(dest) {
   return function (item) {
     return item.copy(dest);
-  }
+  };
 }
 
 /**
  * Get remove directory function.
  * @param {String} dir Remove directory.
- * @returns {Function} Remove directory function.
+ * @return {Function} Remove directory function.
  */
 function rmdir(dir) {
   return function () {
     return util.dir.rmdir(dir);
-  }
+  };
 }
 
 /**
  * Get copy directory function.
  * @param {String} src Source directory.
  * @param {String} dest Destination directory.
- * @returns {Function} Copy directory function.
+ * @return {Function} Copy directory function.
  */
 function cpdir(src, dest) {
   return function () {
     return util.dir.cpdir(src, dest);
-  }
+  };
 }
 
 /**
@@ -109,8 +109,6 @@ Directory.prototype.getChildren = function () {
     .then(getAll);
 };
 Directory.prototype.remove = function () {
-  var that = this;
-
   return Promise.resolve()
     .then(getChildren(this))
     .then(forEach(remove()))

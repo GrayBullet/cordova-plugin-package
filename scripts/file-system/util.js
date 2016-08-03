@@ -20,13 +20,26 @@ function stat(pathname) {
 }
 
 /**
+ * Get file permission mode.
+ * @param {String} pathname File or directory path.
+ * @return {Promise.<Number>} Permission mode.
+ */
+function getMode(pathname) {
+  return stat(pathname)
+    .then(function (stats) {
+      return stats.mode & parseInt('777', 8);
+    });
+}
+
+/**
  * Make directory.
  * @param {String} dir Directory.
+ * @param {Object} options Options.
  * @return {Promise} Promise object.
  */
-function mkdir(dir) {
+function mkdir(dir, options) {
   return new Promise(function (resolve, reject) {
-    fs.mkdir(dir, function (error) {
+    fs.mkdir(dir, options, function (error) {
       if (error && (error.code !== 'EEXIST')) {
         reject(error);
       } else {
@@ -78,14 +91,14 @@ function chmod(pathname, mode) {
 /**
  * mkdir -p
  * @param {String} dir Directory.
- * @param {NUmber} mode Permission mode.
+ * @param {Object} [optOptions] Options.
  * @return {Promise} Promise object.
  */
-function mkdirp(dir, mode) {
+function mkdirp(dir, optOptions) {
   return followPath(dir)
     .reduce(function (prev, current) {
       return prev.then(function () {
-        return mkdir(current, {mode: mode});
+        return mkdir(current, optOptions);
       });
     }, Promise.resolve());
 }
@@ -117,10 +130,10 @@ function copy(src, dest) {
 
   return mkdirp(destDir)
     .then(function () {
-      return stat(src);
+      return getMode(src);
     })
-    .then(function (stats) {
-      return cp(src, dest, stats.mode & parseInt('777', 8));
+    .then(function (mode) {
+      return cp(src, dest, mode);
     });
 }
 
@@ -182,13 +195,13 @@ function rmdir(dir) {
  * @return {Promise} Promise object.
  */
 function cpdir(src, dest) {
-  // noinspection JSUnresolvedFunction
-  return stat(src)
-    .then(function (stats) {
-      return mkdirp(dest, stats.mode)
+  return getMode(src)
+    .then(function (mode) {
+      // noinspection JSUnresolvedFunction
+      return mkdirp(dest, {mode: mode})
         .catch(function (error) {
           if (error.code === 'EEXIST') {
-            return;
+            return chmod(dest, mode);
           }
           // noinspection JSUnresolvedFunction
           return Promise.reject(error);

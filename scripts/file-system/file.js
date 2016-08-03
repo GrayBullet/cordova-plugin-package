@@ -15,7 +15,6 @@ File.prototype.getChildren = function () {
   return Promise.resolve([]);
 };
 
-
 File.prototype.remove = function () {
   return util.file.remove(this.path.full);
 };

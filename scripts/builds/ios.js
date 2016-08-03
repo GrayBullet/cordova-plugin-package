@@ -3,7 +3,7 @@ var path = require('path');
 /**
  * Make is app function.
  * @param {String} device 'emulator' or 'device'.
- * @returns {Function} Is app function.
+ * @return {Function} Is app function.
  */
 function makeIsApp(device) {
   return function (file) {
@@ -17,7 +17,7 @@ function makeIsApp(device) {
       default:
         throw new Error('Unknown device `' + device + '`');
     }
-  }
+  };
 }
 
 /**
