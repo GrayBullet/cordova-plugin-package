@@ -61,12 +61,13 @@ function rmdir(dir) {
 
 /**
  * Get copy directory function.
- * @param {String} dir Destination directory.
+ * @param {String} src Source directory.
+ * @param {String} dest Destination directory.
  * @returns {Function} Copy directory function.
  */
-function cpdir(dir) {
+function cpdir(src, dest) {
   return function () {
-    return util.dir.cpdir(dir);
+    return util.dir.cpdir(src, dest);
   }
 }
 
@@ -120,7 +121,7 @@ Directory.prototype.copy = function (dest) {
   var destPath = this.path.dest(dest);
 
   return Promise.resolve()
-    .then(cpdir(destPath))
+    .then(cpdir(this.path.full, destPath))
     .then(getChildren(this))
     .then(forEach(copy(dest)))
     .then(function () {

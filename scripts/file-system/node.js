@@ -3,23 +3,7 @@ var path = require('path');
 var Promise = require('../promise');
 var Directory = require('./directory');
 var File = require('./file');
-
-/**
- * fs.stat with Promise.
- * @param {String} pathname pathname.
- * @return {Promise.<fs.Stats>} stats.
- */
-function stat(pathname) {
-  return new Promise(function (resolve, reject) {
-    fs.stat(pathname, function (error, stats) {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(stats);
-      }
-    });
-  });
-}
+var util = require('./util');
 
 /**
  * Null object node.
@@ -70,7 +54,7 @@ PathInfo.create = function (pathname) {
  */
 function create(pathInfo) {
   // noinspection JSUnresolvedFunction
-  return stat(pathInfo.full)
+  return util.stat(pathInfo.full)
     .then(function (stats) {
       if (stats.isDirectory()) {
         return new Directory(pathInfo);
