@@ -1,0 +1,10 @@
+install:
+  - "npm install"
+language: node_js
+node_js:
+  - "0.12"
+  - "4"
+  - "6"
+script:
+  - "[ `node -v | sed 's/v//; s/\\..*//;'` -ge '4' ] && npm run lint; echo lint"
+  - "npm test"
