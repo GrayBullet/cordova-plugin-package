@@ -1,4 +1,3 @@
-var Node = require('../file-system/node');
 var NodeSet = require('../file-system/node-set');
 
 /**
@@ -13,11 +12,12 @@ function displayCopied(file) {
  * Source files
  * @param {String} src Source directory.
  * @param {Function} filter Filter function.
+ * @param {Function} createNode Node.create function.
  * @constructor
  */
-function Source(src, filter) {
+function Source(src, filter, createNode) {
   this.nodeSet = function () {
-    return Node.create(src)
+    return createNode(src)
       .then(function (node) {
         return new NodeSet(node).filter(filter);
       });
@@ -28,7 +28,7 @@ Source.prototype.copy = function (dest) {
   if (this.nodeSet) {
     return this.nodeSet()
       .then(function (nodeSet) {
-        nodeSet.copy(dest, displayCopied);
+        return nodeSet.copy(dest, displayCopied);
       });
   }
 };
